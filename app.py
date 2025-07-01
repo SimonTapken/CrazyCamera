@@ -126,8 +126,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 # Get updated coordinates
-# coordinates = qr_code_reader.give_box_qr_codes_and_positions()
-coordinates = {(0, 0), (0, 540), (540, 540), (540, 0)}
+coordinates = qr_code_reader.give_box_qr_codes_and_positions()
+# coordinates = {(0, 0), (0, 540), (540, 540), (540, 0)}
 # Generate updated dots HTML
 dots_html = "".join(
     f'<div style="position: absolute; left: {x}px; top: {y}px; width: {dot_radius*2}px; height: {dot_radius*2}px; border-radius: 50%; background: red; animation: blink 1s infinite;"></div>'
