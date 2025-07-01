@@ -133,7 +133,7 @@ dots_html = "".join(
     f'<div style="position: absolute; left: {x}px; top: {y}px; width: {dot_radius*2}px; height: {dot_radius*2}px; border-radius: 50%; background: red; animation: blink 1s infinite;"></div>'
     for (x, y) in coordinates
 )
-
+#
 # Add this near your map rendering code
 dots_container = st.empty()
 # Update only the dots container
