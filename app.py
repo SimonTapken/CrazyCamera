@@ -17,6 +17,16 @@ qr_code_reader = QRCodeReader("backend/pictures/qrcodes.jpg")
 coordinates = qr_code_reader.give_box_qr_codes_and_positions()
 dot_radius = 10
 
+
+dots_html = ""
+for x, y in coordinates:
+    dots_html = (
+        f'<div style="position:absolute;left:{x}px;top:{y}px;'
+        f"width:{dot_radius * 2}px;height:{dot_radius * 2}px;"
+        "background:red;border-radius:50%;"
+        "animation:blink 1s infinite;pointer-events:none;"
+        'transform:translate(-50%,-50%);"></div>'
+    )
 # Header and style
 st.markdown(
     """
@@ -80,7 +90,7 @@ st.markdown(
 }
 .left-map-container {
     position: relative;
-    width: 800px;
+    width: 440px;
     margin-left: 0;
     margin-right: 0;
     border-radius: 20px;
@@ -136,19 +146,4 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
-
-
-while True:
-    coordinates = qr_code_reader.give_box_qr_codes_and_positions()
-    # dots_html = ""
-    for x, y in coordinates:
-        dots_html = (
-            f'<div style="position:absolute;left:{x}px;top:{y}px;'
-            f"width:{dot_radius * 2}px;height:{dot_radius * 2}px;"
-            "background:red;border-radius:50%;"
-            "animation:blink 1s infinite;pointer-events:none;"
-            'transform:translate(-50%,-50%);"></div>'
-        )
-
-    time.sleep(5)
 
