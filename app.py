@@ -4,12 +4,25 @@ from pathlib import Path
 import streamlit as st
 
 # Convert image to base64
-map_path = "src/map.png"
+map_path = "src/map.png"  # Make sure this path is correct!
 img_data = base64.b64encode(Path(map_path).read_bytes()).decode()
 
-dot_x, dot_y = 100, 150  # Your coordinates
+# List of (x, y) coordinates and dot settings
+coordinates = [(100, 150), (200, 250), (300, 60)]
 dot_radius = 10
 
+# Generate HTML for all dots (no line breaks, no indentation)
+dots_html = ""
+for x, y in coordinates:
+    dots_html += (
+        f'<div style="position:absolute;left:{x}px;top:{y}px;'
+        f"width:{dot_radius*2}px;height:{dot_radius*2}px;"
+        "background:red;border-radius:50%;"
+        "animation:blink 1s infinite;pointer-events:none;"
+        'transform:translate(-50%,-50%);"></div>'
+    )
+
+# Header and style
 st.markdown(
     """
 <style>
@@ -109,22 +122,13 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# Map with blinking dots
 st.markdown(
     f"""
 <div class="map-outer">
-  <div class="left-map-container">
+  <div class="left-map-container" style="position: relative;">
     <img src="data:image/png;base64,{img_data}">
-    <div style="
-      position: absolute;
-      left: {dot_x}px;
-      top: {dot_y}px;
-      width: {dot_radius*2}px;
-      height: {dot_radius*2}px;
-      background: red;
-      border-radius: 50%;
-      animation: blink 1s infinite;
-      pointer-events: none;
-    "></div>
+    {dots_html}
   </div>
   <div class="map-title">Lager Ansicht</div>
 </div>
