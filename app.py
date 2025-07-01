@@ -24,37 +24,6 @@ qr_code_reader = init_qr_reader()
 # Auto-refresh every 5 seconds
 st_autorefresh(interval=5000, limit=None, key="qrcode_refresh")
 
-# Get updated coordinates
-coordinates = qr_code_reader.give_box_qr_codes_and_positions()
-
-# Generate updated dots HTML
-dots_html = "".join(
-    f'<div style="position: absolute; left: {x}px; top: {y}px; width: {dot_radius*2}px; height: {dot_radius*2}px; border-radius: 50%; background: red; animation: blink 1s infinite;"></div>'
-    for (x, y) in coordinates
-)
-
-# Add this near your map rendering code
-dots_container = st.empty()
-# Update only the dots container
-with dots_container:
-    st.markdown(
-        f"""
-        <div class="map-outer">
-          <div class="left-map-container" style="position: relative;">
-            <img src="data:image/png;base64,{img_data}">
-            {dots_html}
-          </div>
-          <div class="map-title">Lager Ansicht</div>
-        </div>
-        <style>
-        @keyframes blink {{
-          0%, 100% {{ opacity: 0; }}
-          50% {{ opacity: 1; }}
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
 
 # Header and style
 st.markdown(
@@ -127,7 +96,8 @@ st.markdown(
     box-shadow: 0 2px 12px rgba(0,0,0,0.04);
 }
 .left-map-container img {
-    width: 100%;
+    width: 560px;
+    height: 560px;
     display: block;
     border-radius: 20px;
 }
@@ -155,3 +125,34 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
+# Get updated coordinates
+# coordinates = qr_code_reader.give_box_qr_codes_and_positions()
+coordinates = {(0, 0), (0, 540), (540, 540), (540, 0)}
+# Generate updated dots HTML
+dots_html = "".join(
+    f'<div style="position: absolute; left: {x}px; top: {y}px; width: {dot_radius*2}px; height: {dot_radius*2}px; border-radius: 50%; background: red; animation: blink 1s infinite;"></div>'
+    for (x, y) in coordinates
+)
+
+# Add this near your map rendering code
+dots_container = st.empty()
+# Update only the dots container
+with dots_container:
+    st.markdown(
+        f"""
+        <div class="map-outer">
+          <div class="left-map-container" style="position: relative;">
+            <img src="data:image/png;base64,{img_data}">
+            {dots_html}
+          </div>
+          <div class="map-title">Lager Ansicht</div>
+        </div>
+        <style>
+        @keyframes blink {{
+          0%, 100% {{ opacity: 0; }}
+          50% {{ opacity: 1; }}
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
