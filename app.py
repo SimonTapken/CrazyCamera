@@ -119,7 +119,7 @@ st.markdown(
 }
 .left-map-container {
     position: relative;
-    width: 800px;
+    width: 100%;
     margin-left: 0;
     margin-right: 0;
     border-radius: 20px;
