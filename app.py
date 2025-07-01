@@ -3,30 +3,59 @@ import time
 from pathlib import Path
 
 import streamlit as st
+from streamlit_autorefresh import st_autorefresh
 
 from backend.QRCodeReader import QRCodeReader
-from streamlit_autorefresh import st_autorefresh
 
 # Convert image to base64
 map_path = "src/map.png"  # Make sure this path is correct!
 img_data = base64.b64encode(Path(map_path).read_bytes()).decode()
 
-qr_code_reader = QRCodeReader("backend/pictures/qrcodes.jpg")
-
-# List of (x, y) coordinates and dot settings
-coordinates = qr_code_reader.give_box_qr_codes_and_positions()
 dot_radius = 10
 
 
-dots_html = ""
-for x, y in coordinates:
-    dots_html = (
-        f'<div style="position:absolute;left:{x}px;top:{y}px;'
-        f"width:{dot_radius * 2}px;height:{dot_radius * 2}px;"
-        "background:red;border-radius:50%;"
-        "animation:blink 1s infinite;pointer-events:none;"
-        'transform:translate(-50%,-50%);"></div>'
+@st.cache_resource  # Cache the backend instance
+def init_qr_reader():
+    return QRCodeReader("backend/pictures/qrcodes.jpg")
+
+
+qr_code_reader = init_qr_reader()
+
+# Auto-refresh every 5 seconds
+st_autorefresh(interval=5000, limit=None, key="qrcode_refresh")
+
+# Get updated coordinates
+coordinates = qr_code_reader.give_box_qr_codes_and_positions()
+
+# Generate updated dots HTML
+dots_html = "".join(
+    f'<div style="position: absolute; left: {x}px; top: {y}px; width: {dot_radius*2}px; height: {dot_radius*2}px; border-radius: 50%; background: red; animation: blink 1s infinite;"></div>'
+    for (x, y) in coordinates
+)
+
+# Add this near your map rendering code
+dots_container = st.empty()
+# Update only the dots container
+with dots_container:
+    st.markdown(
+        f"""
+        <div class="map-outer">
+          <div class="left-map-container" style="position: relative;">
+            <img src="data:image/png;base64,{img_data}">
+            {dots_html}
+          </div>
+          <div class="map-title">Lager Ansicht</div>
+        </div>
+        <style>
+        @keyframes blink {{
+          0%, 100% {{ opacity: 0; }}
+          50% {{ opacity: 1; }}
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
     )
+
 # Header and style
 st.markdown(
     """
@@ -90,7 +119,7 @@ st.markdown(
 }
 .left-map-container {
     position: relative;
-    width: 440px;
+    width: 800px;
     margin-left: 0;
     margin-right: 0;
     border-radius: 20px;
@@ -127,6 +156,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+
 # Map with blinking dots
 st.markdown(
     f"""
@@ -146,4 +176,3 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
-
