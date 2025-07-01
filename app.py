@@ -155,24 +155,3 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
-
-
-# Map with blinking dots
-st.markdown(
-    f"""
-<div class="map-outer">
-  <div class="left-map-container" style="position: relative;">
-    <img src="data:image/png;base64,{img_data}">
-    <{dots_html}>
-  </div>
-  <div class="map-title">Lager Ansicht</div>
-</div>
-<style>
-@keyframes blink {{
-  0%, 100% {{ opacity: 0; }}
-  50% {{ opacity: 1; }}
-}}
-</style>
-""",
-    unsafe_allow_html=True,
-)
