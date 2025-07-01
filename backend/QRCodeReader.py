@@ -1,3 +1,5 @@
+import os
+os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
 import cv2
 from pyzbar import pyzbar
 
@@ -25,6 +27,7 @@ class QRCodeReader:
             return "Path invalid"
 
         qr_codes = pyzbar.decode(picture)
+        print(len(qr_codes))
 
         results = []
         for qr_code in qr_codes:
