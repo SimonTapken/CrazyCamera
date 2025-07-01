@@ -1,14 +1,38 @@
 import base64
+import random
 from pathlib import Path
 
 import streamlit as st
+from streamlit_autorefresh import st_autorefresh
 
 # Convert image to base64
 map_path = "src/map.png"  # Make sure this path is correct!
 img_data = base64.b64encode(Path(map_path).read_bytes()).decode()
 
 # List of (x, y) coordinates and dot settings
-coordinates = [(100, 150), (200, 250), (300, 60)]
+# Auto-refresh every 5 seconds
+
+st_autorefresh(interval=5000, key="refresh")
+
+
+def get_coordinates_from_backend():
+    # Generate 3 random coordinates within 800x600 area
+    return [(random.randint(0, 800), random.randint(0, 600)) for _ in range(3)]
+
+
+# For demonstration, use a placeholder image
+map_path = "src/map.png"
+img_data = base64.b64encode(Path(map_path).read_bytes()).decode()
+
+coordinates = get_coordinates_from_backend()
+dot_radius = 10
+
+
+# Convert image to base64
+map_path = "src/map.png"
+img_data = base64.b64encode(Path(map_path).read_bytes()).decode()
+
+coordinates = get_coordinates_from_backend()
 dot_radius = 10
 
 # Generate HTML for all dots (no line breaks, no indentation)
