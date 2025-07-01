@@ -1,50 +1,21 @@
 import base64
-import random
+import time
 from pathlib import Path
 
 import streamlit as st
+
+from backend.QRCodeReader import QRCodeReader
 from streamlit_autorefresh import st_autorefresh
 
 # Convert image to base64
 map_path = "src/map.png"  # Make sure this path is correct!
 img_data = base64.b64encode(Path(map_path).read_bytes()).decode()
 
+qr_code_reader = QRCodeReader("backend/pictures/qrcodes.jpg")
+
 # List of (x, y) coordinates and dot settings
-# Auto-refresh every 5 seconds
-
-st_autorefresh(interval=5000, key="refresh")
-
-
-def get_coordinates_from_backend():
-    # Generate 3 random coordinates within 800x600 area
-    return [(random.randint(0, 800), random.randint(0, 600)) for _ in range(3)]
-
-
-# For demonstration, use a placeholder image
-map_path = "src/map.png"
-img_data = base64.b64encode(Path(map_path).read_bytes()).decode()
-
-coordinates = get_coordinates_from_backend()
+coordinates = qr_code_reader.give_box_qr_codes_and_positions()
 dot_radius = 10
-
-
-# Convert image to base64
-map_path = "src/map.png"
-img_data = base64.b64encode(Path(map_path).read_bytes()).decode()
-
-coordinates = get_coordinates_from_backend()
-dot_radius = 10
-
-# Generate HTML for all dots (no line breaks, no indentation)
-dots_html = ""
-for x, y in coordinates:
-    dots_html += (
-        f'<div style="position:absolute;left:{x}px;top:{y}px;'
-        f"width:{dot_radius*2}px;height:{dot_radius*2}px;"
-        "background:red;border-radius:50%;"
-        "animation:blink 1s infinite;pointer-events:none;"
-        'transform:translate(-50%,-50%);"></div>'
-    )
 
 # Header and style
 st.markdown(
@@ -152,7 +123,7 @@ st.markdown(
 <div class="map-outer">
   <div class="left-map-container" style="position: relative;">
     <img src="data:image/png;base64,{img_data}">
-    {dots_html}
+    <{dots_html}>
   </div>
   <div class="map-title">Lager Ansicht</div>
 </div>
@@ -165,3 +136,19 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
+
+
+while True:
+    coordinates = qr_code_reader.give_box_qr_codes_and_positions()
+    # dots_html = ""
+    for x, y in coordinates:
+        dots_html = (
+            f'<div style="position:absolute;left:{x}px;top:{y}px;'
+            f"width:{dot_radius * 2}px;height:{dot_radius * 2}px;"
+            "background:red;border-radius:50%;"
+            "animation:blink 1s infinite;pointer-events:none;"
+            'transform:translate(-50%,-50%);"></div>'
+        )
+
+    time.sleep(5)
+
