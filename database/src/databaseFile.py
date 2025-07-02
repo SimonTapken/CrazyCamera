@@ -65,6 +65,14 @@ class DatabaseFile:
         self.cursor.execute("DELETE from kltGeneral WHERE identificationNumber=:identificationNumber", {"identificationNumber": id})
         self.cursor.execute("DELETE from kltTracking WHERE identificationNumber=:identificationNumber", {"identificationNumber": id})
         self.conn.commit()
+    def clear_TrackingTable(self):
+        self.cursor.execute("DELETE from kltTracking")
+        self.conn.commit()
+
+    def clear_GeneralTable(self):
+        self.cursor.execute("DELETE from kltGeneral")
+        self.conn.commit()
+
 
     def closeDatabase(self):
         self.conn.commit()
