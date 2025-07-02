@@ -167,8 +167,8 @@ st.markdown(
 
 
 # Get updated coordinates
-# coordinates = qr_code_reader.give_box_qr_codes_and_positions()
-coordinates = {(0, 0), (0, 540), (540, 540), (540, 0)}
+coordinates = qr_code_reader.give_box_qr_codes_and_positions()
+#coordinates = {(0, 0), (0, 540), (540, 540), (540, 0)}
 
 
 # Generate updated dots HTML
