@@ -1,8 +1,7 @@
 import os
-
 os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
+from qreader import QReader
 import cv2
-from pyzbar import pyzbar
 
 class QRCodeReader:
 
@@ -27,13 +26,14 @@ class QRCodeReader:
         if picture is None:
             return "Path invalid"
 
-        qr_codes = pyzbar.decode(picture)
-
         results = []
-        for qr_code in qr_codes:
-            data = qr_code.data.decode('utf-8')
-            coordinates = [(point.x/2, point.y/2) for point in qr_code.polygon]
-            results.append(coordinates)
+        qreader = QReader()
+        qr_codes = qreader.detect_and_decode(image=picture, return_detections=True)
+        content = qr_codes[0]
+        position = qr_codes[1]
+        for i in range(0, len(content)):
+            print(f"QR-Code {i}: Inhalt: {content[i]} Position: {position[i]['cxcy']}")
+            results.append(position[i]['cxcy'])
 
         return results
 
@@ -45,19 +45,10 @@ class QRCodeReader:
         cropped_img = img[0:1080, 420:1500]
         cv2.imwrite(self.filename, cropped_img)
 
-        qr_code_corners = self.__read_qr_codes(self.filename)
+        positions = self.__read_qr_codes(self.filename)
+
         final_results = []
-        for qr_code in qr_code_corners:
-            top = 1080
-            bottom = 0
-            left = 1080
-            right = 0
-            for corner in qr_code:
-                top = min(top, corner[1])
-                bottom = max(bottom, corner[1])
-                left = min(left, corner[0])
-                right = max(right, corner[0])
-            final_results.append(((right+left)/2, (bottom+top)/2))
+        for position in positions:
+            final_results.append((int(position[0])/2, int(position[1])/2))
 
         return final_results
-
