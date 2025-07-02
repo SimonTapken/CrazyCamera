@@ -7,9 +7,11 @@ class QRCodeReader:
 
     def __init__(self, filename):
         self.filename = filename
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(1)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
+        self.content = []
 
     def __make_picture(self):
         ret, picture = self.cap.read()
@@ -52,3 +54,9 @@ class QRCodeReader:
             final_results.append((content_and_position[0], (int(content_and_position[1][0])/2, int(content_and_position[1][1])/2)))
 
         return final_results
+    
+    def get_content(self):
+        return self.content
+    
+    def set_content(self, new_content):
+        self.content = new_content

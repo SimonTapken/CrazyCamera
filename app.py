@@ -14,18 +14,18 @@ def init_qr_reader():
 
 searchhistory = 0
 
-content = [
-    ("example", (100, 210), "timestamp3"),
-    ("example", (100, 220), "timestamp3"),
-    ("example", (100, 230), "timestamp3"),
-    ("example", (100, 240), "timestamp3"),
-]
 
-content_and_positions = [
-    ("example", (100, 200), "timestamp1"),
-    ("other", (150, 250), "timestamp2"),
-    ("example", (300, 400), "timestamp3"),
-]
+
+#content_and_positions = [
+#    ("example", (100, 200), "timestamp1"),
+ #   ("other", (150, 250), "timestamp2"),
+  #  ("example", (300, 400), "timestamp3"),
+#]
+
+if "content" not in st.session_state:
+    st.session_state.content = []
+
+content = st.session_state.content
 
 
 qr_code_reader = init_qr_reader()
@@ -118,9 +118,10 @@ search_query = st.text_input(
 # --- Search Comparison Logic ---
 
 matched_positions = []
-if search_query:
+if search_query and content is not None:
+    st.text(len(content))
     for entry in content:
-        if entry[0].lower() == search_query.lower():
+        if search_query in entry[0]:
             matched_positions.append(entry[1])
 
 # --- Title ---
@@ -133,17 +134,18 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 
 # --- Overlay Fragment: Image and Dots Together ---
-@st.fragment(run_every="1s")
+@st.fragment(run_every="10s")
 def update_overlay():
     t = time.time()
     base = map_size // 2
     r = 240
-    # content_and_positions = qr_code_reader.give_box_qr_codes_and_positions()
-    content_and_positions = [
-        ("example", (100, 200), "timestamp1"),
-        ("other", (150, 250), "timestamp2"),
-    ]
+    content_and_positions = qr_code_reader.give_box_qr_codes_and_positions()
+    #content_and_positions = [
+     #   ("example", (100, 200), "timestamp1"),
+      #  ("other", (150, 250), "timestamp2"),
+    #]
     coordinates = []
+    print(matched_positions)
     if len(matched_positions) != 0:
         coordinates = matched_positions
     else:
@@ -152,7 +154,6 @@ def update_overlay():
                 (content_and_position[0], content_and_position[1], time.asctime())
             )
             coordinates.append(content_and_position[1])
-
     dots_html = "".join(
         f'<div style="position: absolute; left: {x-dot_radius}px; top: {y-dot_radius}px; width: {dot_radius*2}px; height: {dot_radius*2}px; border-radius: 50%; background: red; animation: blink 1s infinite;"></div>'
         for (x, y) in coordinates
