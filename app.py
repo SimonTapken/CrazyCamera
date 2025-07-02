@@ -11,6 +11,24 @@ from backend.QRCodeReader import QRCodeReader
 def init_qr_reader():
     return QRCodeReader("backend/pictures/qrcodes.jpg")
 
+
+searchhistory = 0
+"""
+content = [
+    ("example", (100, 210), "timestamp3"),
+    ("example", (100, 220), "timestamp3"),
+    ("example", (100, 230), "timestamp3"),
+    ("example", (100, 240), "timestamp3"),
+]
+
+content_and_positions = [
+    ("example", (100, 200), "timestamp1"),
+    ("other", (150, 250), "timestamp2"),
+    ("example", (300, 400), "timestamp3"),
+]
+
+"""
+
 content = []
 
 qr_code_reader = init_qr_reader()
@@ -53,13 +71,6 @@ st.markdown(
         font-weight: bold;
         letter-spacing: 2px;
     }
-    .header-search input {
-        padding: 0.5em 1em;
-        border-radius: 6px;
-        border: none;
-        font-size: 1em;
-        width: 220px;
-    }
     .gap-below-header {
         height: 50px;
     }
@@ -92,17 +103,28 @@ st.markdown(
     <div class="header-outer">
       <div class="header-container">
         <div class="header-title">KLTracking</div>
-        <div class="header-search">
-          <form action="" method="get">
-            <input name="search_query" type="text" placeholder="Type to search..." value="">
-          </form>
-        </div>
       </div>
     </div>
     <div class="gap-below-header"></div>
     """,
     unsafe_allow_html=True,
 )
+
+# --- Streamlit Search Bar ---
+search_query = st.text_input(
+    "",  # No label for clean look
+    "",
+    key="search_bar",
+    placeholder="Type to search...",
+)
+
+# --- Search Comparison Logic ---
+
+matched_positions = []
+if search_query:
+    for entry in content:
+        if entry[0].lower() == search_query.lower():
+            matched_positions.append(entry[1])
 
 # --- Title ---
 st.markdown('<div class="map-title">Lager Ansicht</div>', unsafe_allow_html=True)
@@ -120,10 +142,22 @@ def update_overlay():
     base = map_size // 2
     r = 240
     content_and_positions = qr_code_reader.give_box_qr_codes_and_positions()
+    """
+    content_and_positions = [
+        ("example", (100, 200), "timestamp1"),
+        ("other", (150, 250), "timestamp2"),
+    ]
+    """
     coordinates = []
-    for content_and_position in content_and_positions:
-        content.append((content_and_position[0], content_and_position[1], time.asctime()))
-        coordinates.append(content_and_position[1])
+    if len(matched_positions) != 0:
+        coordinates = matched_positions
+    else:
+        for content_and_position in content_and_positions:
+            content.append(
+                (content_and_position[0], content_and_position[1], time.asctime())
+            )
+            coordinates.append(content_and_position[1])
+
     dots_html = "".join(
         f'<div style="position: absolute; left: {x-dot_radius}px; top: {y-dot_radius}px; width: {dot_radius*2}px; height: {dot_radius*2}px; border-radius: 50%; background: red; animation: blink 1s infinite;"></div>'
         for (x, y) in coordinates
@@ -137,6 +171,7 @@ def update_overlay():
         """,
         unsafe_allow_html=True,
     )
+    # matched_positions.clear()
 
 
 # Place the overlay fragment in the correct container
