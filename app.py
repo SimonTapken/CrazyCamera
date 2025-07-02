@@ -61,6 +61,12 @@ st.markdown(
         font-size: 2em;
         font-weight: bold;
     }
+    .center-map-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 2em;
+    }
     @keyframes blink {
       0%, 100% { opacity: 0; }
       50% { opacity: 1; }
@@ -88,24 +94,13 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- Main Layout ---
+# --- Title ---
 st.markdown('<div class="map-title">Lager Ansicht</div>', unsafe_allow_html=True)
 
-# Use Streamlit columns for layout
-col1, col2, col3 = st.columns([1, 0.07, 1])
-
-with col1:
-    # This container will hold the overlay fragment
-    overlay_container = st.container()
-
-with col2:
-    # Draw the separator as a vertical line using HTML
-    st.markdown(
-        """
-        <div style="width:3px; height:560px; background:#444; border-radius:2px; opacity:0.7; margin:auto;"></div>
-        """,
-        unsafe_allow_html=True,
-    )
+# --- Centered Map Container ---
+st.markdown('<div class="center-map-container">', unsafe_allow_html=True)
+overlay_container = st.container()
+st.markdown("</div>", unsafe_allow_html=True)
 
 
 # --- Overlay Fragment: Image and Dots Together ---
