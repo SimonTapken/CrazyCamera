@@ -13,7 +13,7 @@ def init_qr_reader():
 
 
 searchhistory = 0
-"""
+
 content = [
     ("example", (100, 210), "timestamp3"),
     ("example", (100, 220), "timestamp3"),
@@ -27,9 +27,6 @@ content_and_positions = [
     ("example", (300, 400), "timestamp3"),
 ]
 
-"""
-
-content = []
 
 qr_code_reader = init_qr_reader()
 
@@ -141,13 +138,11 @@ def update_overlay():
     t = time.time()
     base = map_size // 2
     r = 240
-    content_and_positions = qr_code_reader.give_box_qr_codes_and_positions()
-    """
+    # content_and_positions = qr_code_reader.give_box_qr_codes_and_positions()
     content_and_positions = [
         ("example", (100, 200), "timestamp1"),
         ("other", (150, 250), "timestamp2"),
     ]
-    """
     coordinates = []
     if len(matched_positions) != 0:
         coordinates = matched_positions
