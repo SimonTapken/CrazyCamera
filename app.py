@@ -192,7 +192,7 @@ with dots_container:
         </div>
         <div class="wrapper-separator"></div>
         <div class="right-text-box">
-            Hier steht dein Text oder weitere Informationen.
+            Für nähere Information auf einen Location Punkt klicken oder gewünschtes Objekt suchen.
         </div>
     </div>
 </div>
