@@ -5,6 +5,16 @@ from pathlib import Path
 
 import streamlit as st
 
+from backend.QRCodeReader import QRCodeReader
+
+
+def init_qr_reader():
+    return QRCodeReader("backend/pictures/qrcodes.jpg")
+
+content = []
+
+qr_code_reader = init_qr_reader()
+
 # --- Settings ---
 map_path = "src/floorplan.png"  # Make sure this path is correct!
 img_data = base64.b64encode(Path(map_path).read_bytes()).decode()
@@ -104,20 +114,16 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 
 # --- Overlay Fragment: Image and Dots Together ---
-@st.fragment(run_every="2s")
+@st.fragment(run_every="1s")
 def update_overlay():
     t = time.time()
     base = map_size // 2
     r = 240
-    coordinates = [
-        (base + r * math.cos(t), base + r * math.sin(t)),
-        (base + r * math.cos(t + math.pi / 2), base + r * math.sin(t + math.pi / 2)),
-        (base + r * math.cos(t + math.pi), base + r * math.sin(t + math.pi)),
-        (
-            base + r * math.cos(t + 3 * math.pi / 2),
-            base + r * math.sin(t + 3 * math.pi / 2),
-        ),
-    ]
+    content_and_positions = qr_code_reader.give_box_qr_codes_and_positions()
+    coordinates = []
+    for content_and_position in content_and_positions:
+        content.append((content_and_position[0], content_and_position[1], time.asctime()))
+        coordinates.append(content_and_position[1])
     dots_html = "".join(
         f'<div style="position: absolute; left: {x-dot_radius}px; top: {y-dot_radius}px; width: {dot_radius*2}px; height: {dot_radius*2}px; border-radius: 50%; background: red; animation: blink 1s infinite;"></div>'
         for (x, y) in coordinates

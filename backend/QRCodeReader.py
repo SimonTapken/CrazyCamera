@@ -33,7 +33,7 @@ class QRCodeReader:
         position = qr_codes[1]
         for i in range(0, len(content)):
             print(f"QR-Code {i}: Inhalt: {content[i]} Position: {position[i]['cxcy']}")
-            results.append(position[i]['cxcy'])
+            results.append((content[i], position[i]['cxcy']))
 
         return results
 
@@ -45,10 +45,10 @@ class QRCodeReader:
         cropped_img = img[0:1080, 420:1500]
         cv2.imwrite(self.filename, cropped_img)
 
-        positions = self.__read_qr_codes(self.filename)
+        content_and_positions = self.__read_qr_codes(self.filename)
 
         final_results = []
-        for position in positions:
-            final_results.append((int(position[0])/2, int(position[1])/2))
+        for content_and_position in content_and_positions:
+            final_results.append((content_and_position[0], (int(content_and_position[1][0])/2, int(content_and_position[1][1])/2)))
 
         return final_results
